@@ -12,12 +12,12 @@ generateBtn.onclick = () => {
     const userName = formatName(userNameInput);
 
     if (!userName) {
-        showToast('Por favor, insira seu nome completo.');
+        showToast('Informe seu nome.');
         return;
     }
 
     if (!isValidFullName(userName)) {
-        showToast('Digite seu nome completo (nome e sobrenome).');
+        showToast('Informe seu nome e sobrenome.');
         return;
     }
 
