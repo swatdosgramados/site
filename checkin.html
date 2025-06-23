@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>S.W.A.T. dos Gramados | Check-in</title>
+  <link rel="icon" href="assets/favicon.ico" />
+  <style>
+    :root {
+      --gold: #ae853e;
+      --black: #333333;
+      --bg: #f5f5f5;
+      --white: #ffffff;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg);
+      font-family: 'Segoe UI', sans-serif;
+      color: var(--black);
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    footer {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    footer a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.3s;
+    }
+    footer a:hover {
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfgxTUwBecNUsIdDsQtzRpokWdcYwPJQDUmsJcHnWutukHnVg/viewform?embedded=true" loading="lazy">
+    Carregando…
+  </iframe>
+  <footer>
+    <a href="https://www.instagram.com/swatdosgramados" target="_blank">© <span id="year"></span> S.W.A.T. dos Gramados</a>
+  </footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
