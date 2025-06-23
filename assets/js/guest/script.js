@@ -18,36 +18,37 @@ generateBtn.onclick = () => {
     generateBtn.disabled = true;
     generateBtn.textContent = 'Gerando...';
 
+    const formData = new URLSearchParams();
+    formData.append('token', '3cPpyjKKqrBQRHC0UfwlzpsfwcdLxr5YEhEd1eMdUgd0JPTbkBW0sA1y6VrMbKRo');
+    formData.append('route', 'generate-checkout-link');
+    formData.append('action', 'guest');
+    formData.append('name', userName);
+
     fetch('https://script.google.com/macros/s/AKfycbylAV3oOLXvGxCNMTd3NaWstea_CAhjwvn6TTUBzqBDxlF03RyS3x7A0R2KVsRpExXO0A/exec', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: JSON.stringify({
-            token: '3cPpyjKKqrBQRHC0UfwlzpsfwcdLxr5YEhEd1eMdUgd0JPTbkBW0sA1y6VrMbKRo',
-            route: 'generate-checkout-link',
-            action: 'guest',
-            name: userName
-        })
+        body: formData
     })
-        .then(res => res.json())
-        .then(data => {
-            loader.style.display = 'none';
-            generateBtn.disabled = false;
-            generateBtn.textContent = 'Gerar link de pagamento';
+    .then(res => res.json())
+    .then(data => {
+        loader.style.display = 'none';
+        generateBtn.disabled = false;
+        generateBtn.textContent = 'Gerar link de pagamento';
 
-            if (data.status === 'success') {
-                window.open(data.link, '_top');
-            } else {
-                alert(data.message || 'Erro ao gerar o link de pagamento.');
-            }
-        })
-        .catch(() => {
-            loader.style.display = 'none';
-            generateBtn.disabled = false;
-            generateBtn.textContent = 'Gerar link de pagamento';
-            alert('Erro na comunicação com o servidor.');
-        });
+        if (data.status === 'success') {
+            window.open(data.link, '_top');
+        } else {
+            alert(data.message || 'Erro ao gerar o link de pagamento.');
+        }
+    })
+    .catch(() => {
+        loader.style.display = 'none';
+        generateBtn.disabled = false;
+        generateBtn.textContent = 'Gerar link de pagamento';
+        alert('Erro na comunicação com o servidor.');
+    });
 };
 
 function formatDateFull(date) {
