@@ -18,19 +18,14 @@ generateBtn.onclick = () => {
     generateBtn.disabled = true;
     generateBtn.textContent = 'Gerando...';
 
-    const formData = new URLSearchParams();
-    formData.append('token', '3cPpyjKKqrBQRHC0UfwlzpsfwcdLxr5YEhEd1eMdUgd0JPTbkBW0sA1y6VrMbKRo');
-    formData.append('route', 'generate-checkout-link');
-    formData.append('action', 'guest');
-    formData.append('name', userName);
+    const params = new URLSearchParams({
+    token: '3cPpyjKKqrBQRHC0UfwlzpsfwcdLxr5YEhEd1eMdUgd0JPTbkBW0sA1y6VrMbKRo',
+    route: 'generate-checkout-link',
+    action: 'guest',
+    name: userName,
+    });
 
-    fetch('https://script.google.com/macros/s/AKfycbylAV3oOLXvGxCNMTd3NaWstea_CAhjwvn6TTUBzqBDxlF03RyS3x7A0R2KVsRpExXO0A/exec', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: formData
-    })
+    fetch(`https://script.google.com/macros/s/AKfycbylAV3oOLXvGxCNMTd3NaWstea_CAhjwvn6TTUBzqBDxlF03RyS3x7A0R2KVsRpExXO0A/exec?${params.toString()}`)
     .then(res => res.json())
     .then(data => {
         loader.style.display = 'none';
@@ -38,9 +33,9 @@ generateBtn.onclick = () => {
         generateBtn.textContent = 'Gerar link de pagamento';
 
         if (data.status === 'success') {
-            window.open(data.link, '_top');
+        window.open(data.link, '_top');
         } else {
-            alert(data.message || 'Erro ao gerar o link de pagamento.');
+        alert(data.message || 'Erro ao gerar o link de pagamento.');
         }
     })
     .catch(() => {
