@@ -25,14 +25,21 @@ generateBtn.onclick = () => {
     generateBtn.disabled = true;
     generateBtn.textContent = 'Gerando...';
 
+    const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbylAV3oOLXvGxCNMTd3NaWstea_CAhjwvn6TTUBzqBDxlF03RyS3x7A0R2KVsRpExXO0A/exec';
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const route = urlParams.get('route') || null;
+    const action = urlParams.get('action') || null;
+    const token = urlParams.get('token') || null;
+
     const params = new URLSearchParams({
-        token: '3cPpyjKKqrBQRHC0UfwlzpsfwcdLxr5YEhEd1eMdUgd0JPTbkBW0sA1y6VrMbKRo',
-        route: 'generate-checkout-link',
-        action: 'guest',
-        name: userName,
+        token: token,
+        route: route,
+        action: action,
+        name: userName
     });
 
-    fetch(`https://script.google.com/macros/s/AKfycbylAV3oOLXvGxCNMTd3NaWstea_CAhjwvn6TTUBzqBDxlF03RyS3x7A0R2KVsRpExXO0A/exec?${params.toString()}`)
+    fetch(`${API_ENDPOINT}?${params.toString()}`)
         .then(res => res.json())
         .then(data => {
             loader.style.display = 'none';
