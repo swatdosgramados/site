@@ -3,12 +3,16 @@ document.getElementById('year').textContent = new Date().getFullYear();
 const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbylAV3oOLXvGxCNMTd3NaWstea_CAhjwvn6TTUBzqBDxlF03RyS3x7A0R2KVsRpExXO0A/exec';
 const urlParams = new URLSearchParams(window.location.search);
 
-const route = urlParams.get('route') || null;
+const order_nsu = urlParams.get('order_nsu') || null;
+const receipt_url= urlParams.get('receipt_url') || null;
 const action = urlParams.get('action') || null;
 const token = urlParams.get('token') || null;
+const route = urlParams.get('route') || null;
 const receiptUrl = urlParams.get('receipt_url') || '#';
 
 const params = new URLSearchParams({
+    order_nsu: order_nsu,
+    receipt_url: receipt_url,
     token: token,
     route: route,
     action: action
@@ -31,7 +35,7 @@ async function fetchPaymentStatus() {
             <div class="dropdown">
               <button class="button">DOWNLOAD</button>
               <div class="dropdown-content">
-                <a href="${data.ticket_url || '#'}" target="_blank">Ingresso</a>
+                <a href="${data.payload.ticket || '#'}" target="_blank">Ingresso</a>
                 <a href="${receiptUrl}" target="_blank">Recibo</a>
               </div>
             </div>

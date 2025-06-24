@@ -98,11 +98,16 @@ function isValidFullName(name) {
     return parts.length >= 2;
 }
 
-function formatName(name) {
-    return name
-        .toLowerCase()
-        .split(' ')
-        .filter(word => word)
-        .map(word => word[0].toUpperCase() + word.substring(1))
-        .join(' ');
+function formatName(fullName) {
+  const words = fullName
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  const firstTwo = words.slice(0, 2);
+
+  const capitalized = firstTwo.map(word => word.charAt(0).toUpperCase() + word.slice(1));
+
+  return capitalized.join(' ');
 }
