@@ -35,7 +35,7 @@ async function fetchPaymentStatus() {
             <div class="dropdown">
               <button class="button">DOWNLOAD</button>
               <div class="dropdown-content">
-                <a href="${data.payload.ticket || '#'}" target="_blank">Ingresso</a>
+                <a href="${data.payload.ticket || '#'}" target="_blank" download>Ingresso</a>
                 <a href="${receiptUrl}" target="_blank">Recibo</a>
               </div>
             </div>
