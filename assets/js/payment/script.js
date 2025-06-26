@@ -31,11 +31,17 @@ generateBtn.onclick = () => {
     const route = urlParams.get('route') || null;
     const action = urlParams.get('action') || null;
     const token = urlParams.get('token') || null;
-
+    const transactionId = urlParams.get('transaction_id') || null;
+    const slug = urlParams.get('slug') || null;
+    const receiptUrl = urlParams.get('receipt_url') || null;
+    
     const params = new URLSearchParams({
         token: token,
         route: route,
         action: action,
+        transaction_id: transactionId,
+        slug: slug,
+        receipt_url: receiptUrl,
         name: userName
     });
 
