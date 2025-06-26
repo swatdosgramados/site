@@ -4,15 +4,18 @@ const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbylAV3oOLXvGxCNMTd
 const urlParams = new URLSearchParams(window.location.search);
 
 const order_nsu = urlParams.get('order_nsu') || null;
-const receipt_url= urlParams.get('receipt_url') || null;
 const action = urlParams.get('action') || null;
 const token = urlParams.get('token') || null;
 const route = urlParams.get('route') || null;
+const transactionId = urlParams.get('transaction_id') || null;
+const slug = urlParams.get('slug') || null;
 const receiptUrl = urlParams.get('receipt_url') || '#';
 
 const params = new URLSearchParams({
     order_nsu: order_nsu,
-    receipt_url: receipt_url,
+    transaction_id: transactionId,
+    slug: slug,
+    receipt_url: receiptUrl,
     token: token,
     route: route,
     action: action
