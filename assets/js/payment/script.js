@@ -70,7 +70,7 @@ function formatDateFull(date) {
 function getNextSaturday() {
     const today = new Date();
     const dayOfWeek = today.getDay();
-    const daysUntilSaturday = (6 - dayOfWeek + 7) % 7 || 7;
+    const daysUntilSaturday = (6 - dayOfWeek + 7) % 7;
     const nextSaturday = new Date(today);
     nextSaturday.setDate(today.getDate() + daysUntilSaturday);
     return nextSaturday;
@@ -99,15 +99,15 @@ function isValidFullName(name) {
 }
 
 function formatName(fullName) {
-  const words = fullName
-    .trim()
-    .toLowerCase()
-    .split(/\s+/)
-    .filter(Boolean);
+    const words = fullName
+        .trim()
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(Boolean);
 
-  const firstTwo = words.slice(0, 2);
+    const firstTwo = words.slice(0, 2);
 
-  const capitalized = firstTwo.map(word => word.charAt(0).toUpperCase() + word.slice(1));
+    const capitalized = firstTwo.map(word => word.charAt(0).toUpperCase() + word.slice(1));
 
-  return capitalized.join(' ');
+    return capitalized.join(' ');
 }
