@@ -31,7 +31,7 @@ generateBtn.onclick = () => {
     const route = urlParams.get('route') || null;
     const action = urlParams.get('action') || null;
     const token = urlParams.get('token') || null;
-    
+
     const params = new URLSearchParams({
         token: token,
         route: route,
