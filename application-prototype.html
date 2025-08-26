@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protótipo de Ouvidoria do Baba</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'custom-black': '#1a1a1a',
+                        'custom-black-dark': '#000000',
+                        'custom-gold': '#ae853e',
+                        'custom-gold-dark': '#9a7837',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: white;
+            border-radius: 2rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 700px;
+        }
+        .header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            border-top-left-radius: 2rem;
+            border-top-right-radius: 2rem;
+            position: relative;
+        }
+        .header .notification-icon {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+        }
+        .main-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .case-item {
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+        .case-item:hover {
+            transform: translateY(-2px);
+        }
+        .pill {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .recording-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 9999px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .recording-indicator {
+            width: 12px;
+            height: 12px;
+            background-color: red;
+            border-radius: 50%;
+            display: none;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div id="app" class="app-container">
+
+        <!-- Login View -->
+        <div id="login-view" class="view">
+            <header class="header">
+                <h1 class="text-2xl font-bold">Acessar Ouvidoria</h1>
+            </header>
+            <div class="main-content flex flex-col justify-center items-center h-full">
+                <!-- Logo do time -->
+                <img src="https://swatdosgramados.com.br/assets/img/logo.png" alt="Logo Swat dos Gramados" class="h-24 mx-auto mb-6 rounded-full">
+                <div class="w-full space-y-4 p-4">
+                    <input type="email" id="email-input" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-custom-gold focus:ring focus:ring-custom-gold focus:ring-opacity-50" placeholder="Seu email">
+                    <input type="password" id="password-input" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-custom-gold focus:ring focus:ring-custom-gold focus:ring-opacity-50" placeholder="Sua senha">
+                    <button id="login-btn" class="w-full bg-custom-black text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:bg-custom-black-dark transition duration-300">
+                        Entrar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main View (Dashboard) -->
+        <div id="main-view" class="view hidden">
+            <header class="header">
+                <h1 class="text-2xl font-bold">Ouvidoria do Baba</h1>
+                <div class="notification-icon" id="show-notifications-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path d="M5.858 2.222A2.99 2.99 0 0 1 6.741 2a2.99 2.99 0 0 1 2.835 1.569l.324.647A4.998 4.998 0 0 0 14 5a5.001 5.001 0 0 0 4.656-3.371A2.99 2.99 0 0 1 18.259 2a2.99 2.99 0 0 1 2.835 1.569l.324.647c.602 1.206 1.801 1.968 3.176 1.968a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-.75.75c-1.375 0-2.574.762-3.176 1.968l-.324.647A2.99 2.99 0 0 1 18.259 12a2.99 2.99 0 0 1-2.835-1.569l-.324-.647A4.998 4.998 0 0 0 10 9a5.001 5.001 0 0 0-4.656 3.371A2.99 2.99 0 0 1 5.741 12a2.99 2.99 0 0 1-2.835-1.569l-.324-.647C1.98 9.584.781 8.822-.594 8.822a.75.75 0 0 1-.75-.75V6.572a.75.75 0 0 1 .75-.75c1.375 0 2.574-.762 3.176-1.968l.324-.647A2.99 2.99 0 0 1 5.858 2.222Z" />
+                    </svg>
+                    <span id="notification-badge" class="absolute top-2 right-4 w-4 h-4 rounded-full bg-red-500 text-white text-xs flex items-center justify-center hidden">3</span>
+                </div>
+            </header>
+            <div class="main-content">
+                <button id="show-form-btn" class="w-full bg-custom-black text-white font-bold py-3 px-4 rounded-xl mb-4 shadow-lg hover:bg-custom-black-dark transition duration-300">
+                    + Registrar Novo Caso
+                </button>
+                <div class="bg-gray-200 text-center text-sm text-gray-700 py-2 rounded-xl mb-4">
+                    Impulsionamento: 10 apoios (1/3 dos membros)
+                </div>
+                <h2 class="text-lg font-bold mb-3 text-gray-800">Casos Ativos</h2>
+                <div id="active-cases-list" class="space-y-4">
+                    <!-- Case items will be injected here by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Form View -->
+        <div id="form-view" class="view hidden">
+            <header class="header flex items-center">
+                <button id="back-to-main-btn-1" class="text-white text-2xl font-bold mr-4">&larr;</button>
+                <h1 class="text-2xl font-bold flex-grow text-center">Novo Registro</h1>
+                <div class="w-8"></div> <!-- Spacer -->
+            </header>
+            <div class="main-content">
+                <form id="new-case-form" class="space-y-4">
+                    <div>
+                        <label for="case-type" class="block text-sm font-medium text-gray-700">Tipo de Caso</label>
+                        <select id="case-type" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-custom-gold focus:ring focus:ring-custom-gold focus:ring-opacity-50">
+                            <option value="sugestao">Sugestão</option>
+                            <option value="reclamacao">Reclamação</option>
+                            <option value="denuncia">Denúncia</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="case-title" class="block text-sm font-medium text-gray-700">Título do Caso</label>
+                        <input type="text" id="case-title" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-custom-gold focus:ring focus:ring-custom-gold focus:ring-opacity-50" placeholder="Ex: Problemas com bolas murchas">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Descrição Detalhada</label>
+                        <textarea id="case-description" rows="4" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-custom-gold focus:ring focus:ring-custom-gold focus:ring-opacity-50" placeholder="Descreva seu caso aqui..."></textarea>
+                        <div class="flex items-center justify-center py-4">
+                            <button type="button" id="record-audio-btn" class="bg-custom-gold text-white recording-button rounded-xl shadow-lg hover:bg-custom-gold-dark transition duration-300">
+                                <span id="record-indicator" class="recording-indicator"></span>
+                                <span id="record-text">Gravar Áudio</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="case-anonymous" class="rounded text-custom-gold focus:ring-custom-gold">
+                        <label for="case-anonymous" class="ml-2 block text-sm text-gray-900">Registrar de forma anônima</label>
+                    </div>
+                    <button type="submit" class="w-full bg-custom-black text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:bg-custom-black-dark transition duration-300">
+                        Enviar
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Case Detail View -->
+        <div id="case-detail-view" class="view hidden">
+            <header class="header flex items-center">
+                <button id="back-to-main-btn-2" class="text-white text-2xl font-bold mr-4">&larr;</button>
+                <h1 id="detail-title" class="text-2xl font-bold flex-grow text-center"></h1>
+                <div class="w-8"></div> <!-- Spacer -->
+            </header>
+            <div class="main-content">
+                <div id="detail-status" class="mb-4"></div>
+                <p id="detail-description" class="text-gray-700 mb-4"></p>
+                <div id="audio-playback" class="p-4 bg-gray-100 rounded-lg hidden">
+                    <h3 class="font-bold text-lg mb-2">Mensagem de Voz</h3>
+                    <button id="play-audio-btn" class="w-full bg-custom-black text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:bg-custom-black-dark transition duration-300">
+                        Reproduzir Áudio
+                    </button>
+                </div>
+                <div id="detail-decision" class="p-4 bg-gray-100 rounded-lg hidden">
+                    <h3 class="font-bold text-lg mb-2">Decisão do Comitê</h3>
+                    <p id="decision-text" class="text-gray-600"></p>
+                    <button id="evaluate-btn" class="w-full bg-custom-black text-white font-bold py-3 px-4 rounded-xl mt-4 shadow-lg hover:bg-custom-black-dark transition duration-300">
+                        Avaliar Decisão
+                    </button>
+                </div>
+                <button id="boost-btn" class="w-full bg-custom-black text-white font-bold py-3 px-4 rounded-xl mt-4 shadow-lg hover:bg-custom-black-dark transition duration-300">
+                    Apoiar Caso (<span id="supports-count">0</span>)
+                </button>
+            </div>
+        </div>
+        
+        <!-- Evaluation View -->
+        <div id="evaluation-view" class="view hidden">
+            <header class="header flex items-center">
+                <button id="back-to-detail-btn" class="text-white text-2xl font-bold mr-4">&larr;</button>
+                <h1 class="text-2xl font-bold flex-grow text-center">Avaliar Decisão</h1>
+                <div class="w-8"></div> <!-- Spacer -->
+            </header>
+            <div class="main-content">
+                <form id="evaluation-form" class="space-y-4">
+                    <h3 class="text-lg font-semibold mb-2" id="eval-case-title"></h3>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Agilidade</label>
+                        <div class="flex items-center space-x-2 mt-1">
+                            <input type="radio" id="agilidade-1" name="agilidade" value="1" class="text-custom-gold">
+                            <label for="agilidade-1">1</label>
+                            <input type="radio" id="agilidade-2" name="agilidade" value="2" class="text-custom-gold">
+                            <label for="agilidade-2">2</label>
+                            <input type="radio" id="agilidade-3" name="agilidade" value="3" class="text-custom-gold">
+                            <label for="agilidade-3">3</label>
+                            <input type="radio" id="agilidade-4" name="agilidade" value="4" class="text-custom-gold">
+                            <label for="agilidade-4">4</label>
+                            <input type="radio" id="agilidade-5" name="agilidade" value="5" class="text-custom-gold">
+                            <label for="agilidade-5">5</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Imparcialidade</label>
+                        <div class="flex items-center space-x-2 mt-1">
+                            <input type="radio" id="imparcialidade-1" name="imparcialidade" value="1" class="text-custom-gold">
+                            <label for="imparcialidade-1">1</label>
+                            <input type="radio" id="imparcialidade-2" name="imparcialidade" value="2" class="text-custom-gold">
+                            <label for="imparcialidade-2">2</label>
+                            <input type="radio" id="imparcialidade-3" name="imparcialidade" value="3" class="text-custom-gold">
+                            <label for="imparcialidade-3">3</label>
+                            <input type="radio" id="imparcialidade-4" name="imparcialidade" value="4" class="text-custom-gold">
+                            <label for="imparcialidade-4">4</label>
+                            <input type="radio" id="imparcialidade-5" name="imparcialidade" value="5" class="text-custom-gold">
+                            <label for="imparcialidade-5">5</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Clareza da Decisão</label>
+                        <div class="flex items-center space-x-2 mt-1">
+                            <input type="radio" id="clareza-1" name="clareza" value="1" class="text-custom-gold">
+                            <label for="clareza-1">1</label>
+                            <input type="radio" id="clareza-2" name="clareza" value="2" class="text-custom-gold">
+                            <label for="clareza-2">2</label>
+                            <input type="radio" id="clareza-3" name="clareza" value="3" class="text-custom-gold">
+                            <label for="clareza-3">3</label>
+                            <input type="radio" id="clareza-4" name="clareza" value="4" class="text-custom-gold">
+                            <label for="clareza-4">4</label>
+                            <input type="radio" id="clareza-5" name="clareza" value="5" class="text-custom-gold">
+                            <label for="clareza-5">5</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="eval-comments" class="block text-sm font-medium text-gray-700">Comentários (opcional)</label>
+                        <textarea id="eval-comments" rows="3" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-custom-gold focus:ring focus:ring-custom-gold focus:ring-opacity-50"></textarea>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="eval-anonymous" class="rounded text-custom-gold focus:ring-custom-gold">
+                        <label for="eval-anonymous" class="ml-2 block text-sm text-gray-900">Avaliar de forma anônima</label>
+                    </div>
+                    <button type="submit" class="w-full bg-custom-black text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:bg-custom-black-dark transition duration-300">
+                        Enviar Avaliação
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Notifications View -->
+        <div id="notifications-view" class="view hidden">
+            <header class="header flex items-center">
+                <button id="back-from-notifications-btn" class="text-white text-2xl font-bold mr-4">&larr;</button>
+                <h1 class="text-2xl font-bold flex-grow text-center">Notificações</h1>
+                <div class="w-8"></div> <!-- Spacer -->
+            </header>
+            <div class="main-content">
+                <ul id="notifications-list" class="space-y-4">
+                    <!-- Notifications will be injected here -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Custom Message Box -->
+        <div id="message-box" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-white rounded-xl p-6 shadow-xl text-center max-w-sm w-full">
+                <h3 id="message-title" class="text-lg font-bold mb-2"></h3>
+                <p id="message-text" class="mb-4 text-gray-700"></p>
+                <button id="close-message-btn" class="bg-custom-black text-white font-bold py-2 px-4 rounded-xl hover:bg-custom-black-dark transition duration-300">
+                    Ok
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados simulados para os casos de ouvidoria
+        const mockCases = [
+            {
+                id: 1,
+                title: "Reclamação sobre divisão de times",
+                description: "A divisão de times tem sido injusta, com os mesmos jogadores fortes sempre juntos, desequilibrando as partidas.",
+                type: "reclamacao",
+                supports: 3,
+                status: "Em Análise",
+                deadline: "23/08/2025",
+                decision: null,
+                voted: false
+            },
+            {
+                id: 2,
+                title: "Sugestão para melhoria na organização",
+                description: "Proponho que os horários sejam fixos e que um sorteio de times seja feito pelo app antes de cada jogo para evitar atritos.",
+                type: "sugestao",
+                supports: 12, // Impulsionado
+                status: "Decidido",
+                deadline: "20/08/2025",
+                decision: "O comitê decidiu adotar o sorteio de times via app para todos os jogos. O sorteio será feito 15 minutos antes do início para garantir a presença dos jogadores.",
+                voted: true
+            },
+            {
+                id: 3,
+                title: "Denúncia de conduta antidesportiva",
+                description: "Um membro do grupo tem agido de forma agressiva e desrespeitosa durante os jogos, causando um ambiente hostil.",
+                type: "denuncia",
+                supports: 8,
+                status: "Em Análise",
+                deadline: "25/08/2025",
+                decision: null,
+                voted: false
+            },
+            {
+                id: 4,
+                title: "Sugestão para nova camisa",
+                description: "Sugiro que o grupo crie uma nova camisa com um design mais moderno.",
+                type: "sugestao",
+                supports: 9,
+                status: "Em Análise",
+                deadline: "28/08/2025",
+                decision: null,
+                voted: false
+            },
+            {
+                id: 5,
+                title: "Áudio: Mudança no local do jogo",
+                description: null, // Caso com mensagem de áudio
+                audio: "Simulação de áudio: 'Gostaria de sugerir uma mudança temporária de local para o próximo jogo, pois o campo principal está com problemas.'",
+                type: "sugestao",
+                supports: 5,
+                status: "Em Análise",
+                deadline: "30/08/2025",
+                decision: null,
+                voted: false
+            }
+        ];
+
+        // Dados simulados para as notificações
+        const mockNotifications = [
+            { id: 1, text: 'O caso "Sugestão para melhoria na organização" foi decidido.', read: false },
+            { id: 2, text: 'Um novo caso foi registrado: "Denúncia de conduta antidesportiva".', read: false },
+            { id: 3, text: 'Você recebeu uma medalha por apoiar 5 casos.', read: false }
+        ];
+
+        let currentUser = null;
+        let currentCase = null;
+        let notificationsCount = mockNotifications.length;
+        let isRecording = false; // Estado para simular a gravação de áudio
+        let hasRecordedAudio = false; // Flag para verificar se um áudio foi gravado
+
+        // Helper function to get the correct view element
+        const getViewById = (id) => document.getElementById(id);
+
+        // Helper function to show a specific view and hide others
+        const showView = (viewId) => {
+            const views = document.querySelectorAll('.view');
+            views.forEach(view => view.classList.add('hidden'));
+            getViewById(viewId).classList.remove('hidden');
+        };
+
+        // Renders the list of active cases on the dashboard
+        const renderCases = () => {
+            const list = getViewById('active-cases-list');
+            list.innerHTML = '';
+            mockCases.forEach(caseItem => {
+                const isBoosted = caseItem.supports >= 10;
+                const statusColor = {
+                    "Em Análise": "bg-yellow-200 text-yellow-800",
+                    "Decidido": "bg-green-200 text-green-800"
+                }[caseItem.status] || "bg-gray-200 text-gray-800";
+
+                const pillBoosted = `bg-custom-gold/20 text-custom-gold`;
+
+                const caseDiv = document.createElement('div');
+                caseDiv.className = `case-item p-4 bg-white rounded-xl shadow flex items-center space-x-4`;
+                caseDiv.innerHTML = `
+                    <div class="flex-grow">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <span class="pill ${statusColor}">${caseItem.status}</span>
+                            ${isBoosted ? `<span class="pill ${pillBoosted}">Impulsionado</span>` : ''}
+                        </div>
+                        <h3 class="text-md font-bold text-gray-800">${caseItem.title}</h3>
+                        <p class="text-sm text-gray-500">Apoios: ${caseItem.supports}</p>
+                    </div>
+                `;
+                caseDiv.addEventListener('click', () => showCaseDetails(caseItem));
+                list.appendChild(caseDiv);
+            });
+        };
+
+        // Populates and shows the case detail view
+        const showCaseDetails = (caseItem) => {
+            currentCase = caseItem;
+            getViewById('detail-title').textContent = caseItem.title;
+            
+            const statusColor = {
+                "Em Análise": "bg-yellow-200 text-yellow-800",
+                "Decidido": "bg-green-200 text-green-800"
+            }[caseItem.status] || "bg-gray-200 text-gray-800";
+            
+            const pillBoosted = `bg-custom-gold/20 text-custom-gold`;
+            const detailStatus = getViewById('detail-status');
+            detailStatus.innerHTML = `<span class="pill ${statusColor}">${caseItem.status}</span>`;
+            if (caseItem.supports >= 10) {
+                detailStatus.innerHTML += ` <span class="pill ${pillBoosted}">Impulsionado</span>`;
+            }
+            if (caseItem.status === "Em Análise") {
+                 detailStatus.innerHTML += ` <span class="text-sm text-gray-500 ml-2">Prazo: ${caseItem.deadline}</span>`;
+            }
+
+            // Mostra o áudio ou a descrição, dependendo do caso
+            const audioPlayback = getViewById('audio-playback');
+            const detailDescription = getViewById('detail-description');
+            if (caseItem.audio) {
+                audioPlayback.classList.remove('hidden');
+                detailDescription.classList.add('hidden');
+            } else {
+                audioPlayback.classList.add('hidden');
+                detailDescription.classList.remove('hidden');
+                detailDescription.textContent = caseItem.description;
+            }
+
+            const decisionSection = getViewById('detail-decision');
+            if (caseItem.decision) {
+                getViewById('decision-text').textContent = caseItem.decision;
+                decisionSection.classList.remove('hidden');
+                getViewById('evaluate-btn').classList.remove('hidden');
+            } else {
+                decisionSection.classList.add('hidden');
+            }
+
+            const boostBtn = getViewById('boost-btn');
+            getViewById('supports-count').textContent = currentCase.supports;
+            if (caseItem.status === "Em Análise") {
+                boostBtn.classList.remove('hidden');
+            } else {
+                boostBtn.classList.add('hidden');
+            }
+
+            showView('case-detail-view');
+        };
+
+        // Renders the list of notifications
+        const renderNotifications = () => {
+            const list = getViewById('notifications-list');
+            list.innerHTML = '';
+            mockNotifications.forEach(notification => {
+                const notificationLi = document.createElement('li');
+                notificationLi.className = `p-4 bg-white rounded-xl shadow ${notification.read ? 'text-gray-500' : 'font-bold'}`;
+                notificationLi.textContent = notification.text;
+                list.appendChild(notificationLi);
+            });
+            notificationsCount = 0;
+            updateNotificationBadge();
+        };
+
+        // Updates the notification badge count
+        const updateNotificationBadge = () => {
+            const badge = getViewById('notification-badge');
+            if (notificationsCount > 0) {
+                badge.textContent = notificationsCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        };
+
+        // Shows a custom message box
+        const showMessageBox = (title, text) => {
+            getViewById('message-title').textContent = title;
+            getViewById('message-text').textContent = text;
+            getViewById('message-box').classList.remove('hidden');
+        };
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            showView('login-view');
+        });
+
+        // Login
+        getViewById('login-btn').addEventListener('click', () => {
+            const email = getViewById('email-input').value;
+            const password = getViewById('password-input').value;
+            if (email.trim() && password.trim()) {
+                currentUser = { email: email }; // Updated to store email
+                renderCases();
+                updateNotificationBadge();
+                showView('main-view');
+            } else {
+                showMessageBox("Erro", "Por favor, preencha seu email e senha.");
+            }
+        });
+
+        // Main Dashboard buttons
+        getViewById('show-form-btn').addEventListener('click', () => showView('form-view'));
+        getViewById('show-notifications-btn').addEventListener('click', () => showView('notifications-view'));
+
+        // Back buttons
+        getViewById('back-to-main-btn-1').addEventListener('click', () => showView('main-view'));
+        getViewById('back-to-main-btn-2').addEventListener('click', () => showView('main-view'));
+        getViewById('back-to-detail-btn').addEventListener('click', () => showView('case-detail-view'));
+        getViewById('back-from-notifications-btn').addEventListener('click', () => showView('main-view'));
+        getViewById('close-message-btn').addEventListener('click', () => getViewById('message-box').classList.add('hidden'));
+
+        // New Case Form submission
+        getViewById('new-case-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = getViewById('case-title').value;
+            const description = getViewById('case-description').value;
+            const type = getViewById('case-type').value;
+
+            if (title && (description || hasRecordedAudio)) {
+                let newCase = {
+                    id: mockCases.length + 1,
+                    title: title,
+                    type: type,
+                    supports: 0,
+                    status: "Em Análise",
+                    deadline: "Prazo pendente",
+                    decision: null
+                };
+                
+                if (hasRecordedAudio) {
+                    newCase.description = null;
+                    newCase.audio = "Este é um caso com uma mensagem de voz simulada.";
+                } else {
+                    newCase.description = description;
+                    newCase.audio = null;
+                }
+                
+                mockCases.push(newCase);
+                renderCases();
+                showView('main-view');
+                showMessageBox("Caso Registrado!", "Seu caso foi enviado com sucesso para a ouvidoria.");
+                getViewById('new-case-form').reset();
+                hasRecordedAudio = false;
+            } else {
+                showMessageBox("Erro", "Por favor, preencha o título e a descrição ou grave um áudio.");
+            }
+        });
+
+        // Toggle recording state
+        getViewById('record-audio-btn').addEventListener('click', () => {
+            isRecording = !isRecording;
+            const recordIndicator = getViewById('record-indicator');
+            const recordText = getViewById('record-text');
+            const caseDescription = getViewById('case-description');
+
+            if (isRecording) {
+                recordIndicator.style.display = 'block';
+                recordText.textContent = 'Gravando...';
+                caseDescription.disabled = true;
+                caseDescription.placeholder = "Não é possível digitar enquanto grava o áudio.";
+                hasRecordedAudio = true; // Assume o áudio foi gravado ao parar
+            } else {
+                recordIndicator.style.display = 'none';
+                recordText.textContent = 'Gravar Áudio';
+                caseDescription.disabled = false;
+                caseDescription.placeholder = "Descreva seu caso aqui...";
+                showMessageBox("Áudio Gravado!", "Sua mensagem de áudio foi anexada ao caso.");
+            }
+        });
+        
+        // Handle audio playback
+        getViewById('play-audio-btn').addEventListener('click', () => {
+            if (currentCase && currentCase.audio) {
+                showMessageBox("Reproduzindo Áudio", currentCase.audio);
+            }
+        });
+
+        // Boost button
+        getViewById('boost-btn').addEventListener('click', () => {
+            if (currentCase && currentCase.supports < 10) {
+                currentCase.supports++;
+                getViewById('supports-count').textContent = currentCase.supports;
+                if (currentCase.supports >= 10) {
+                    showMessageBox("Caso Impulsionado!", "O caso atingiu 10 apoios e foi enviado para o Comitê Disciplinar.");
+                    renderCases(); // Re-render to show the 'Impulsionado' pill
+                } else {
+                    showMessageBox("Apoio Registrado!", `Você apoiou o caso. Faltam ${10 - currentCase.supports} apoios para ele ser impulsionado.`);
+                }
+            }
+        });
+
+        // Evaluation button
+        getViewById('evaluate-btn').addEventListener('click', () => {
+            if (currentCase) {
+                getViewById('eval-case-title').textContent = currentCase.title;
+                showView('evaluation-view');
+            }
+        });
+
+        // Evaluation Form submission
+        getViewById('evaluation-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const agilidade = document.querySelector('input[name="agilidade"]:checked');
+            const imparcialidade = document.querySelector('input[name="imparcialidade"]:checked');
+            const clareza = document.querySelector('input[name="clareza"]:checked');
+
+            if (agilidade && imparcialidade && clareza) {
+                showMessageBox("Avaliação Enviada!", "Obrigado por sua avaliação. Seu feedback é muito importante para o Comitê.");
+                currentCase.voted = true;
+                showView('main-view');
+            } else {
+                showMessageBox("Erro", "Por favor, avalie todos os quesitos.");
+            }
+        });
+
+        // Initial render for notifications view
+        getViewById('show-notifications-btn').addEventListener('click', () => {
+            renderNotifications();
+            showView('notifications-view');
+        });
+    </script>
+</body>
+</html>
+
